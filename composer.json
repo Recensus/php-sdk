@@ -1,0 +1,16 @@
+{
+    "name": "recensus/php-sdk",
+    "description": "The Recensus PHP SDK",
+    "autoload": {
+        "psr-0": { "": "src/" }
+    },
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/Recensus/zend_http_client.git"
+        }
+    ],
+    "require": {   
+        "recensus/zend-http-client": "dev-master"
+    }
+}
