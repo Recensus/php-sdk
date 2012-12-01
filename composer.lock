@@ -1,5 +1,5 @@
 {
-    "hash": "876d8f61d3eabd3f1837a817a8ee06a6",
+    "hash": "5e628f3c2fa871d28e72af80441ebd23",
     "packages": [
         {
             "name": "recensus/zend-http-client",
@@ -7,18 +7,18 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/Recensus/zend_http_client.git",
-                "reference": "ffc0bb9dec1581b044768c2d32a46a5d41e46095"
+                "reference": "500756e9bb797ba9cead84db3bf3d5d58bf4026c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://github.com/Recensus/zend_http_client/archive/ffc0bb9dec1581b044768c2d32a46a5d41e46095.zip",
-                "reference": "ffc0bb9dec1581b044768c2d32a46a5d41e46095",
+                "url": "https://github.com/Recensus/zend_http_client/archive/500756e9bb797ba9cead84db3bf3d5d58bf4026c.zip",
+                "reference": "500756e9bb797ba9cead84db3bf3d5d58bf4026c",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.1.0"
             },
-            "time": "1354379855",
+            "time": "1354384135",
             "type": "library",
             "installation-source": "source",
             "autoload": {
@@ -37,7 +37,7 @@
                     "role": "Maintainer"
                 }
             ],
-            "description": "Http Client For PHP5.1 and Above",
+            "description": "Http client For PHP5.1 and above. Originally part of ZF1.11",
             "homepage": "http://github.com/recensus/zend_http_client",
             "keywords": [
                 "http"
