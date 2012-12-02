@@ -56,7 +56,7 @@ class RecensusWidget {
      * 
      * @var string
      */
-    protected $fragURL = "";
+    protected $fragURL = "http://app.recensus.com/widget/api/get";
 
     /**
      * Initiaise an instance of the RecensusWidget class.
@@ -77,6 +77,8 @@ class RecensusWidget {
         $this->validateProductData($productData);
 
         $this->productData = $productData;
+        
+        $this->httpClient = new Zend_Http_Client();
     }
 
     /**
@@ -105,7 +107,7 @@ class RecensusWidget {
      * @return string
      */
     public function getSharedSecret() {
-        return $this->sharedSecret;
+        return $this->merchantSecret;
     }
 
     /**
@@ -116,7 +118,7 @@ class RecensusWidget {
      * @return void
      */
     public function setSharedSecret($sharedSecret) {
-        $this->sharedSecret = $sharedSecret;
+        $this->merchantSecret = $sharedSecret;
     }
 
     /**
@@ -136,9 +138,19 @@ class RecensusWidget {
      * @return void
      */
     public function setProductData($productData) {
+        $this->validateProductData($productData);
         $this->productData = $productData;
     }
 
+    /**
+     * Returns the URL in used to call the Recensus IFrame.
+     * 
+     * @return string
+     */
+    public function getIframeEndpointURL() {
+        return $this->iframeURL;
+    }
+    
     /**
      * Overrides the URL of the IFrame endpoint. Used in testing.
      * 
@@ -146,8 +158,17 @@ class RecensusWidget {
      * 
      * @return void
      */
-    public function setIframeURL($iframeURL) {
+    public function setIframeEndpointURL($iframeURL) {
         $this->iframeURL = $iframeURL;
+    }
+    
+    /**
+     * Returns the URL in used to call the Recensus HTML Fragment endpoint.
+     * 
+     * @return string
+     */
+    public function getFragEndpointURL() {
+        return $this->fragURL;
     }
 
     /**
@@ -155,10 +176,19 @@ class RecensusWidget {
      * 
      * @param string $fragURL
      */
-    public function setFragURL($fragURL) {
+    public function setFragEndpointURL($fragURL) {
         $this->fragURL = $fragURL;
     }
 
+    /**
+     * Returns the HTTP client used to make external HTTP calls to Recensus.
+     * 
+     * @return Zend_Http_Client
+     */
+    public function getHttpClient() {
+        return $this->httpClient;
+    }
+    
     /**
      * Override the instance of Zend_Http_Client used to make calls to the 
      * Recensus service. Used for testing.
@@ -168,11 +198,20 @@ class RecensusWidget {
      * @return void
      */
     public function setHttpClient(Zend_Http_Client $client) {
-        $this->client = $client;
+        $this->httpClient = $client;
     }
 
     /**
-     * Sets whether to throw exceptions. The default is not to throw exceptions
+     * Returns true if the Widget will throw exeptions on Errors.
+     * 
+     * @return boolean
+     */
+    public function willThrowExceptions() {
+        return $this->throwExceptions;
+    }
+    
+    /**
+     * Sets if to throw exceptions. The default is not to throw exceptions
      * and instead to create PHP_Notices. This to allow the implementing site
      * to continue to render despite the review widget failing to render.
      *  
@@ -181,7 +220,7 @@ class RecensusWidget {
      * @return void
      */
     public function setThrowExceptions($throw) {
-        
+         $this->throwExceptions = $throw;
     }
 
     /**
@@ -191,6 +230,27 @@ class RecensusWidget {
      * @return string 
      */
     public function getHTMLFragment() {
+
+        $callingUrl = $this->fragURL . $this->getFrag();
+
+        try {
+
+            $response = $this->httpClient
+                    ->setUri($callingUrl)
+                    ->setMethod()
+                    ->request();
+            
+            if($response->isSuccessful()) {
+                return $response->getBody();    
+            } else {
+                $this->handleError('Recieved ' . $response->responseCodeAsText() . 'from ' . $callingUrl);
+            }
+          
+            
+        } catch (Exception $e) {
+            $this->handleError($e->getMessage());
+        }
+        
         
     }
 
@@ -203,51 +263,8 @@ class RecensusWidget {
     public function getIFrameUrl() {
 
         $base = $this->iframeURL;
-        $hashStr = "";
-        $parts = array();
 
-        if (isset($this->productData['url']))
-            $parts['url'] = $this->productData['url'];        
-        
-        if (isset($this->merchantToken))
-            $parts['mid'] = $this->merchantToken;
-        
-        if (isset($this->productData['brand'])) {
-            $parts['brand'] = $this->productData['brand'];
-            $hashStr .= $this->productData['brand'];
-        }
-        
-        if (isset($this->productData['mpn'])) {
-            $parts['mpn'] = $this->productData['mpn'];
-            $hashStr .= $this->productData['mpn'];
-        }
-        
-        if (isset($this->productData['gtin'])) {
-            $parts['gtin'] = $this->productData['gtin'];
-            $hashStr .= $this->productData['gtin'];
-        }
-        
-        if (isset($this->productData['type']))
-            $parts['type'] = $this->productData['type'];
-
-        if (isset($this->productData['lang']))
-            $parts['lang'] = $this->productData['lang'];
-
-        if (isset($this->productData['title']))
-            $parts['title'] = $this->productData['title'];
-
-        if (isset($this->productData['info']))
-            $parts['info'] = $this->productData['info'];
-        
-        $parts['hash'] = md5($hashStr.$this->merchantSecret);
-        
-        $frag = "?";
-        
-        foreach($parts as $key => $value) {
-            $frag .= $key .'=' . urlencode($value) . '&';
-        }
-        
-        $frag = substr($frag, 0, -1);
+        $frag = $this->getFrag();
 
         return $base . $frag;
     }
@@ -278,6 +295,63 @@ class RecensusWidget {
         }
 
         return true;
+    }
+
+    /**
+     * Creates and returns the URL fragment used by getIframeUrl and 
+     * getHTMLFragment.
+     * 
+     * @return string
+     */
+    protected function getFrag() {
+
+        $hashStr = "";
+        $parts = array();
+
+        if (isset($this->productData['url']))
+            $parts['url'] = $this->productData['url'];
+
+        if (isset($this->merchantToken))
+            $parts['mid'] = $this->merchantToken;
+
+        if (isset($this->productData['brand'])) {
+            $parts['brand'] = $this->productData['brand'];
+            $hashStr .= $this->productData['brand'];
+        }
+
+        if (isset($this->productData['mpn'])) {
+            $parts['mpn'] = $this->productData['mpn'];
+            $hashStr .= $this->productData['mpn'];
+        }
+
+        if (isset($this->productData['gtin'])) {
+            $parts['gtin'] = $this->productData['gtin'];
+            $hashStr .= $this->productData['gtin'];
+        }
+
+        if (isset($this->productData['type']))
+            $parts['type'] = $this->productData['type'];
+
+        if (isset($this->productData['lang']))
+            $parts['lang'] = $this->productData['lang'];
+
+        if (isset($this->productData['title']))
+            $parts['title'] = $this->productData['title'];
+
+        if (isset($this->productData['info']))
+            $parts['info'] = $this->productData['info'];
+
+        $parts['hash'] = md5($hashStr . $this->merchantSecret);
+
+        $frag = "?";
+
+        foreach ($parts as $key => $value) {
+            $frag .= $key . '=' . urlencode($value) . '&';
+        }
+
+        $frag = substr($frag, 0, -1);
+
+        return $frag;
     }
 
     /**
