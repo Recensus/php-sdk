@@ -67,16 +67,17 @@ class RecensusWidget {
      * 
      * @return RecensusWidget
      */
-    public function __construct($merchantToken, $merchantSecret, array $productData, $throwExceptions = false) {
-
+    public function __construct($merchantToken, $merchantSecret, $productData = null, $throwExceptions = false) {
+        
         $this->throwExceptions = $throwExceptions;
 
         $this->merchantToken = $merchantToken;
         $this->merchantSecret = $merchantSecret;
 
-        $this->validateProductData($productData);
-
-        $this->productData = $productData;
+        if(!is_null($productData)) {
+            $this->validateProductData($productData);    
+            $this->productData = $productData;
+        }
         
         $this->httpClient = new Zend_Http_Client();
     }
@@ -230,7 +231,11 @@ class RecensusWidget {
      * @return string 
      */
     public function getHTMLFragment() {
-
+        
+        if(!isset($this->productData)) {
+            $this->handleError("No product data set");
+        }
+        
         $callingUrl = $this->fragURL . $this->getFrag();
 
         try {
@@ -261,7 +266,11 @@ class RecensusWidget {
      * @return string 
      */
     public function getIFrameUrl() {
-
+        
+        if(!isset($this->productData)) {
+            $this->handleError("No product data set");
+        }
+        
         $base = $this->iframeURL;
 
         $frag = $this->getFrag();
@@ -304,7 +313,7 @@ class RecensusWidget {
      * @return string
      */
     protected function getFrag() {
-
+        
         $hashStr = "";
         $parts = array();
 

@@ -234,6 +234,50 @@ class RecensusWidgetTest extends PHPUnit_Framework_TestCase {
         $this->assertInstanceOf('RecensusWidget', $object);
     }
 
+    // If no product data is set then an error should be triggered
+    
+    /**
+     * @expectedException PHPUnit_Framework_Error
+     */
+    public function testGetIFrameUrlShouldErrorIfNoProductDataPresent() {
+
+        $object = new RecensusWidget('0000000', '000000', null);
+
+        $object->getIFrameUrl();
+    }
+
+    /**
+     * @expectedException RecensusWidgetException
+     */
+    public function testGetIFrameUrlShouldThrowIfNoProductDataPresent() {
+
+        $object = new RecensusWidget('0000000', '000000', null, true);
+
+        $object->getIFrameUrl();
+    }
+    
+    /**
+     * @expectedException PHPUnit_Framework_Error
+     */
+    public function testGetHTMLFragmentShouldErrorIfNoProductDataPresent() {
+
+        $object = new RecensusWidget('0000000', '000000', null);
+
+        $object->getHTMLFragment();
+    }
+
+    /**
+     * @expectedException RecensusWidgetException
+     */
+    public function testGetHTMLFragmentShouldThrowIfNoProductDataPresent() {
+
+        $object = new RecensusWidget('0000000', '000000', null, true);
+
+        $object->getHTMLFragment();
+    }
+    
+    
+
     // The iframe URL should contain elements passed into the object at 
     // construct time. Also the URL should contain the correct identifying 
     // hash.
