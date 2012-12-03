@@ -180,7 +180,7 @@ class RecensusWidgetTest extends PHPUnit_Framework_TestCase {
 
     public function testConstructShouldNotErrorWhenOptionalParamsAreAbsent() {
 
-        $data = $this->getWellFormedData(array('type', 'lang', 'title', 'info'));
+        $data = $this->getWellFormedData(array('type', 'lang', 'title', 'info', 'price'));
 
         $object = new RecensusWidget('0000000', '000000', $data);
 
@@ -277,7 +277,7 @@ class RecensusWidgetTest extends PHPUnit_Framework_TestCase {
 
         $dataProp = $object->getDataProperty();
 
-        $expectedDataProp = "url=http://cool-shoes.com/product/cool-shoe-1&mid=00000&brand=Cool Shoe Maker&mpn=Cool Shoes&gtin=00000000000&type=p&lang=en&title=Super Cool Shoes&info=These shoes are off the hook!&hash=47a126ea30cfd0dbc26cd9b33bd0e8cc";
+        $expectedDataProp = "url=http://cool-shoes.com/product/cool-shoe-1&mid=00000&brand=Cool Shoe Maker&mpn=Cool Shoes&gtin=00000000000&type=p&lang=en&title=Super Cool Shoes&info=These shoes are off the hook!&price=2.99&hash=47a126ea30cfd0dbc26cd9b33bd0e8cc";
 
         $this->assertEquals($expectedDataProp, $dataProp, "Expected $expectedDataProp but got $dataProp");
     }
@@ -287,7 +287,7 @@ class RecensusWidgetTest extends PHPUnit_Framework_TestCase {
 
     public function testGetHTMLFragmentUsesCorrectURLAndHash() {
 
-        $expectedUrl = "http://app.recensus.com/widget/api/get?url=http%3A%2F%2Fcool-shoes.com%2Fproduct%2Fcool-shoe-1&mid=00000&brand=Cool+Shoe+Maker&mpn=Cool+Shoes&gtin=00000000000&type=p&lang=en&title=Super+Cool+Shoes&info=These+shoes+are+off+the+hook%21&hash=47a126ea30cfd0dbc26cd9b33bd0e8cc";
+        $expectedUrl = "http://app.recensus.com/widget/api/get?url=http%3A%2F%2Fcool-shoes.com%2Fproduct%2Fcool-shoe-1&mid=00000&brand=Cool+Shoe+Maker&mpn=Cool+Shoes&gtin=00000000000&type=p&lang=en&title=Super+Cool+Shoes&info=These+shoes+are+off+the+hook%21&price=2.99&hash=47a126ea30cfd0dbc26cd9b33bd0e8cc";
 
         $client = $this->getMock('Zend_Http_Client', array(), array(), '', false, false);
 
@@ -332,7 +332,7 @@ class RecensusWidgetTest extends PHPUnit_Framework_TestCase {
      */
     public function testGetHTMLFragmentErrorsOnBadResponse() {
 
-        $expectedDataProp = "http://app.recensus.com/widget/api/get?url=http%3A%2F%2Fcool-shoes.com%2Fproduct%2Fcool-shoe-1&mid=00000&brand=Cool+Shoe+Maker&mpn=Cool+Shoes&gtin=00000000000&type=p&lang=en&title=Super+Cool+Shoes&info=These+shoes+are+off+the+hook%21&hash=47a126ea30cfd0dbc26cd9b33bd0e8cc";
+        $expectedDataProp = "http://app.recensus.com/widget/api/get?url=http%3A%2F%2Fcool-shoes.com%2Fproduct%2Fcool-shoe-1&mid=00000&brand=Cool+Shoe+Maker&mpn=Cool+Shoes&gtin=00000000000&type=p&lang=en&title=Super+Cool+Shoes&info=These+shoes+are+off+the+hook%21&price=2.99&hash=47a126ea30cfd0dbc26cd9b33bd0e8cc";
 
         $client = $this->getMock('Zend_Http_Client', array(), array(), '', false, false);
 
@@ -369,7 +369,7 @@ class RecensusWidgetTest extends PHPUnit_Framework_TestCase {
      */
     public function testGetHTMLFragmentErrorsOnRequestError() {
 
-        $expectedDataProp = "http://app.recensus.com/widget/api/get?url=http%3A%2F%2Fcool-shoes.com%2Fproduct%2Fcool-shoe-1&mid=00000&brand=Cool+Shoe+Maker&mpn=Cool+Shoes&gtin=00000000000&type=p&lang=en&title=Super+Cool+Shoes&info=These+shoes+are+off+the+hook%21&hash=47a126ea30cfd0dbc26cd9b33bd0e8cc";
+        $expectedDataProp = "http://app.recensus.com/widget/api/get?url=http%3A%2F%2Fcool-shoes.com%2Fproduct%2Fcool-shoe-1&mid=00000&brand=Cool+Shoe+Maker&mpn=Cool+Shoes&gtin=00000000000&type=p&lang=en&title=Super+Cool+Shoes&info=These+shoes+are+off+the+hook%21&price=2.99&hash=47a126ea30cfd0dbc26cd9b33bd0e8cc";
 
         $client = $this->getMock('Zend_Http_Client', array(), array(), '', false, false);
 
@@ -399,7 +399,7 @@ class RecensusWidgetTest extends PHPUnit_Framework_TestCase {
      * @expectedException RecensusWidgetException
      */
     public function testGetHTMLFragmentThrowsOnBadResponse() {
-        $expectedDataProp = "http://app.recensus.com/widget/api/get?url=http%3A%2F%2Fcool-shoes.com%2Fproduct%2Fcool-shoe-1&mid=00000&brand=Cool+Shoe+Maker&mpn=Cool+Shoes&gtin=00000000000&type=p&lang=en&title=Super+Cool+Shoes&info=These+shoes+are+off+the+hook%21&hash=47a126ea30cfd0dbc26cd9b33bd0e8cc";
+        $expectedDataProp = "http://app.recensus.com/widget/api/get?url=http%3A%2F%2Fcool-shoes.com%2Fproduct%2Fcool-shoe-1&mid=00000&brand=Cool+Shoe+Maker&mpn=Cool+Shoes&gtin=00000000000&type=p&lang=en&title=Super+Cool+Shoes&info=These+shoes+are+off+the+hook%21&price=2.99&hash=47a126ea30cfd0dbc26cd9b33bd0e8cc";
 
         $client = $this->getMock('Zend_Http_Client', array(), array(), '', false, false);
 
@@ -435,7 +435,7 @@ class RecensusWidgetTest extends PHPUnit_Framework_TestCase {
      * @expectedException RecensusWidgetException
      */
     public function testGetHTMLFragmentThrowsOnRequestError() {
-        $expectedDataProp = "http://app.recensus.com/widget/api/get?url=http%3A%2F%2Fcool-shoes.com%2Fproduct%2Fcool-shoe-1&mid=00000&brand=Cool+Shoe+Maker&mpn=Cool+Shoes&gtin=00000000000&type=p&lang=en&title=Super+Cool+Shoes&info=These+shoes+are+off+the+hook%21&hash=47a126ea30cfd0dbc26cd9b33bd0e8cc";
+        $expectedDataProp = "http://app.recensus.com/widget/api/get?url=http%3A%2F%2Fcool-shoes.com%2Fproduct%2Fcool-shoe-1&mid=00000&brand=Cool+Shoe+Maker&mpn=Cool+Shoes&gtin=00000000000&type=p&lang=en&title=Super+Cool+Shoes&info=These+shoes+are+off+the+hook%21&price=2.99&hash=47a126ea30cfd0dbc26cd9b33bd0e8cc";
 
         $client = $this->getMock('Zend_Http_Client', array(), array(), '', false, false);
 
@@ -479,7 +479,8 @@ class RecensusWidgetTest extends PHPUnit_Framework_TestCase {
             'title' => 'Super Cool Shoes',
             'lang' => 'en',
             'type' => 'p',
-            'info' => 'These shoes are off the hook!'
+            'info' => 'These shoes are off the hook!',
+            'price' => '2.99'
         );
 
         foreach ($omitFields as $field) {

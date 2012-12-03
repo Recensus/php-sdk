@@ -320,6 +320,9 @@ class RecensusWidget {
 
         if (isset($this->productData['info']))
             $parts['info'] = $this->productData['info'];
+        
+        if (isset($this->productData['price']))
+            $parts['price'] = $this->productData['price'];
 
         $parts['hash'] = md5($hashStr . $this->merchantSecret);
 
