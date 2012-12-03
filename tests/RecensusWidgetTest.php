@@ -45,19 +45,6 @@ class RecensusWidgetTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals($data, $object->getProductData());
     }
 
-    public function testGetSetIframeURLShouldReturnCorrectValue() {
-
-        $data = $this->getWellFormedData();
-
-        $object = new RecensusWidget('00000', '11111', $data);
-
-        $this->assertEquals("http://app.recensus.com/widget/iframe", $object->getIframeEndpointURL());
-
-        $object->setIframeEndpointURL("http://IChangedIt.com");
-
-        $this->assertEquals("http://IChangedIt.com", $object->getIframeEndpointURL());
-    }
-
     public function testGetSetFragURLShouldReturnCorrectValue() {
 
         $data = $this->getWellFormedData();
@@ -239,21 +226,21 @@ class RecensusWidgetTest extends PHPUnit_Framework_TestCase {
     /**
      * @expectedException PHPUnit_Framework_Error
      */
-    public function testGetIFrameUrlShouldErrorIfNoProductDataPresent() {
+    public function testGetDataPropertyShouldErrorIfNoProductDataPresent() {
 
         $object = new RecensusWidget('0000000', '000000', null);
 
-        $object->getIFrameUrl();
+        $object->getDataProperty();
     }
 
     /**
      * @expectedException RecensusWidgetException
      */
-    public function testGetIFrameUrlShouldThrowIfNoProductDataPresent() {
+    public function testGetDataPropertyShouldThrowIfNoProductDataPresent() {
 
         $object = new RecensusWidget('0000000', '000000', null, true);
 
-        $object->getIFrameUrl();
+        $object->getDataProperty();
     }
     
     /**
@@ -282,17 +269,17 @@ class RecensusWidgetTest extends PHPUnit_Framework_TestCase {
     // construct time. Also the URL should contain the correct identifying 
     // hash.
 
-    public function testGetIFrameUrlShouldReturnStringWithCorrectParametersAndHash() {
+    public function testGetDataPropertyShouldReturnStringWithCorrectParametersAndHash() {
 
         $data = $this->getWellFormedData();
 
         $object = new RecensusWidget('00000', '11111', $data, true);
 
-        $url = $object->getIFrameUrl();
+        $dataProp = $object->getDataProperty();
 
-        $expectedUrl = "http://app.recensus.com/widget/iframe?url=http%3A%2F%2Fcool-shoes.com%2Fproduct%2Fcool-shoe-1&mid=00000&brand=Cool+Shoe+Maker&mpn=Cool+Shoes&gtin=00000000000&type=p&lang=en&title=Super+Cool+Shoes&info=These+shoes+are+off+the+hook%21&hash=47a126ea30cfd0dbc26cd9b33bd0e8cc";
+        $expectedDataProp = "url=http://cool-shoes.com/product/cool-shoe-1&mid=00000&brand=Cool Shoe Maker&mpn=Cool Shoes&gtin=00000000000&type=p&lang=en&title=Super Cool Shoes&info=These shoes are off the hook!&hash=47a126ea30cfd0dbc26cd9b33bd0e8cc";
 
-        $this->assertEquals($expectedUrl, $url, "Expected $expectedUrl but got $url");
+        $this->assertEquals($expectedDataProp, $dataProp, "Expected $expectedDataProp but got $dataProp");
     }
 
     // The HTTP client should be used to query recensus for product review html
@@ -345,13 +332,13 @@ class RecensusWidgetTest extends PHPUnit_Framework_TestCase {
      */
     public function testGetHTMLFragmentErrorsOnBadResponse() {
 
-        $expectedUrl = "http://app.recensus.com/widget/api/get?url=http%3A%2F%2Fcool-shoes.com%2Fproduct%2Fcool-shoe-1&mid=00000&brand=Cool+Shoe+Maker&mpn=Cool+Shoes&gtin=00000000000&type=p&lang=en&title=Super+Cool+Shoes&info=These+shoes+are+off+the+hook%21&hash=47a126ea30cfd0dbc26cd9b33bd0e8cc";
+        $expectedDataProp = "http://app.recensus.com/widget/api/get?url=http%3A%2F%2Fcool-shoes.com%2Fproduct%2Fcool-shoe-1&mid=00000&brand=Cool+Shoe+Maker&mpn=Cool+Shoes&gtin=00000000000&type=p&lang=en&title=Super+Cool+Shoes&info=These+shoes+are+off+the+hook%21&hash=47a126ea30cfd0dbc26cd9b33bd0e8cc";
 
         $client = $this->getMock('Zend_Http_Client', array(), array(), '', false, false);
 
         $client->expects($this->once())
                 ->method('setUri')
-                ->with($expectedUrl)
+                ->with($expectedDataProp)
                 ->will($this->returnValue($client));
 
         $client->expects($this->once())
@@ -382,13 +369,13 @@ class RecensusWidgetTest extends PHPUnit_Framework_TestCase {
      */
     public function testGetHTMLFragmentErrorsOnRequestError() {
 
-        $expectedUrl = "http://app.recensus.com/widget/api/get?url=http%3A%2F%2Fcool-shoes.com%2Fproduct%2Fcool-shoe-1&mid=00000&brand=Cool+Shoe+Maker&mpn=Cool+Shoes&gtin=00000000000&type=p&lang=en&title=Super+Cool+Shoes&info=These+shoes+are+off+the+hook%21&hash=47a126ea30cfd0dbc26cd9b33bd0e8cc";
+        $expectedDataProp = "http://app.recensus.com/widget/api/get?url=http%3A%2F%2Fcool-shoes.com%2Fproduct%2Fcool-shoe-1&mid=00000&brand=Cool+Shoe+Maker&mpn=Cool+Shoes&gtin=00000000000&type=p&lang=en&title=Super+Cool+Shoes&info=These+shoes+are+off+the+hook%21&hash=47a126ea30cfd0dbc26cd9b33bd0e8cc";
 
         $client = $this->getMock('Zend_Http_Client', array(), array(), '', false, false);
 
         $client->expects($this->once())
                 ->method('setUri')
-                ->with($expectedUrl)
+                ->with($expectedDataProp)
                 ->will($this->returnValue($client));
 
         $client->expects($this->once())
@@ -412,13 +399,13 @@ class RecensusWidgetTest extends PHPUnit_Framework_TestCase {
      * @expectedException RecensusWidgetException
      */
     public function testGetHTMLFragmentThrowsOnBadResponse() {
-        $expectedUrl = "http://app.recensus.com/widget/api/get?url=http%3A%2F%2Fcool-shoes.com%2Fproduct%2Fcool-shoe-1&mid=00000&brand=Cool+Shoe+Maker&mpn=Cool+Shoes&gtin=00000000000&type=p&lang=en&title=Super+Cool+Shoes&info=These+shoes+are+off+the+hook%21&hash=47a126ea30cfd0dbc26cd9b33bd0e8cc";
+        $expectedDataProp = "http://app.recensus.com/widget/api/get?url=http%3A%2F%2Fcool-shoes.com%2Fproduct%2Fcool-shoe-1&mid=00000&brand=Cool+Shoe+Maker&mpn=Cool+Shoes&gtin=00000000000&type=p&lang=en&title=Super+Cool+Shoes&info=These+shoes+are+off+the+hook%21&hash=47a126ea30cfd0dbc26cd9b33bd0e8cc";
 
         $client = $this->getMock('Zend_Http_Client', array(), array(), '', false, false);
 
         $client->expects($this->once())
                 ->method('setUri')
-                ->with($expectedUrl)
+                ->with($expectedDataProp)
                 ->will($this->returnValue($client));
 
         $client->expects($this->once())
@@ -448,13 +435,13 @@ class RecensusWidgetTest extends PHPUnit_Framework_TestCase {
      * @expectedException RecensusWidgetException
      */
     public function testGetHTMLFragmentThrowsOnRequestError() {
-        $expectedUrl = "http://app.recensus.com/widget/api/get?url=http%3A%2F%2Fcool-shoes.com%2Fproduct%2Fcool-shoe-1&mid=00000&brand=Cool+Shoe+Maker&mpn=Cool+Shoes&gtin=00000000000&type=p&lang=en&title=Super+Cool+Shoes&info=These+shoes+are+off+the+hook%21&hash=47a126ea30cfd0dbc26cd9b33bd0e8cc";
+        $expectedDataProp = "http://app.recensus.com/widget/api/get?url=http%3A%2F%2Fcool-shoes.com%2Fproduct%2Fcool-shoe-1&mid=00000&brand=Cool+Shoe+Maker&mpn=Cool+Shoes&gtin=00000000000&type=p&lang=en&title=Super+Cool+Shoes&info=These+shoes+are+off+the+hook%21&hash=47a126ea30cfd0dbc26cd9b33bd0e8cc";
 
         $client = $this->getMock('Zend_Http_Client', array(), array(), '', false, false);
 
         $client->expects($this->once())
                 ->method('setUri')
-                ->with($expectedUrl)
+                ->with($expectedDataProp)
                 ->will($this->returnValue($client));
 
         $client->expects($this->once())

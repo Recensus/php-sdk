@@ -45,13 +45,6 @@ class RecensusWidget {
     protected $throwExceptions = false;
 
     /**
-     * URL of IFrame enpoint.
-     * 
-     * @var String
-     */
-    protected $iframeURL = "http://app.recensus.com/widget/iframe";
-
-    /**
      * URL of the HTML Frag Endpoint
      * 
      * @var string
@@ -142,26 +135,6 @@ class RecensusWidget {
         $this->validateProductData($productData);
         $this->productData = $productData;
     }
-
-    /**
-     * Returns the URL in used to call the Recensus IFrame.
-     * 
-     * @return string
-     */
-    public function getIframeEndpointURL() {
-        return $this->iframeURL;
-    }
-    
-    /**
-     * Overrides the URL of the IFrame endpoint. Used in testing.
-     * 
-     * @param string $iframeURL
-     * 
-     * @return void
-     */
-    public function setIframeEndpointURL($iframeURL) {
-        $this->iframeURL = $iframeURL;
-    }
     
     /**
      * Returns the URL in used to call the Recensus HTML Fragment endpoint.
@@ -236,7 +209,7 @@ class RecensusWidget {
             $this->handleError("No product data set");
         }
         
-        $callingUrl = $this->fragURL . $this->getFrag();
+        $callingUrl = $this->fragURL . "?" . $this->getFrag();
 
         try {
 
@@ -265,17 +238,15 @@ class RecensusWidget {
      * 
      * @return string 
      */
-    public function getIFrameUrl() {
+    public function getDataProperty() {
         
         if(!isset($this->productData)) {
             $this->handleError("No product data set");
         }
-        
-        $base = $this->iframeURL;
 
-        $frag = $this->getFrag();
+        $frag = $this->getFrag(false);
 
-        return $base . $frag;
+        return $frag;
     }
 
     /**
@@ -312,7 +283,7 @@ class RecensusWidget {
      * 
      * @return string
      */
-    protected function getFrag() {
+    protected function getFrag($encode = true) {
         
         $hashStr = "";
         $parts = array();
@@ -352,15 +323,20 @@ class RecensusWidget {
 
         $parts['hash'] = md5($hashStr . $this->merchantSecret);
 
-        $frag = "?";
+        $frag = "";
 
         foreach ($parts as $key => $value) {
-            $frag .= $key . '=' . urlencode($value) . '&';
+            
+            if($encode) {
+                $value = urlencode($value);
+            }
+            
+            $frag .= $key . '=' . $value . '&';
         }
 
-        $frag = substr($frag, 0, -1);
+        $finalFrag = substr($frag, 0, -1);
 
-        return $frag;
+        return $finalFrag;
     }
 
     /**
