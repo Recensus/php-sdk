@@ -38,6 +38,13 @@ $classes = array(
     'Zend_Validate_Hostname',
     'Zend_Validate_Interface',
     'Zend_Validate_Ip',
+    'Zend_Loader',
+    'Zend_Loader_Autoloader',
+    'Zend_Validate_Hostname_Biz',
+    'Zend_Validate_Hostname_Cn',
+    'Zend_Validate_Hostname_Com',
+    'Zend_Validate_Hostname_Jp',
+    
 );
 
 $ccl = new ClassCollectionLoader();
