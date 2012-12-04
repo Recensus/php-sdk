@@ -36,6 +36,39 @@ class RecensusApi {
      */
     protected $throwExceptions = false;
 
+    /**
+     * The base URL to use when making API requests.
+     * 
+     * @var string
+     */
+    protected $baseUrl = "http://api.recensus.com/";
+
+    /**
+     * The end points to use when making requests to the services offered by
+     * the Recensus API.
+     * 
+     * @var array
+     */
+    protected $endpoints = array(
+        'ccr' => 'merchant/{merchantId}/customer-contact-request'
+    );
+
+    /**
+     * The last Response recieved from the Recensus API
+     * 
+     * @var Zend_Http_Response
+     */
+    protected $lastResponse;
+
+    /**
+     * Initialises an instance of the RecensusApi class.
+     * 
+     * @param string  $merchantToken
+     * @param string  $merchantSecret
+     * @param boolean $throwExceptions
+     * 
+     * @return void
+     */
     public function __construct($merchantToken, $merchantSecret, $throwExceptions = false) {
         $this->merchantToken = $merchantToken;
         $this->merchantSecret = $merchantSecret;
@@ -67,7 +100,7 @@ class RecensusApi {
      * 
      * @return string
      */
-    public function getSharedSecret() {
+    public function getMerchantSecret() {
         return $this->merchantSecret;
     }
 
@@ -126,6 +159,27 @@ class RecensusApi {
     }
 
     /**
+     * Gets the current baseurl in use when making requests to the Recensus API.
+     * 
+     * @return string
+     */
+    public function getBaseUrl() {
+        return $this->baseUrl;
+    }
+
+    /**
+     * Sets the baseurl used to make requests to the Recensus API.
+     * Primarily used to override the URL when testing. 
+     * 
+     * @param string $baseUrl
+     * 
+     * @return void
+     */
+    public function setBaseUrl($baseUrl) {
+        $this->baseUrl = $baseUrl;
+    }
+
+    /**
      * Makes a request to Recensus to contact a customer who has made a recent 
      * purchase with a merchant. An email will be sent to the customer asking 
      * them to review the product. Note: The email is not sent immediatley,
@@ -134,16 +188,60 @@ class RecensusApi {
      *  
      */
     public function makeCustomerContactRequest($data) {
-        
+
+        $url = $this->baseUrl . str_replace('{merchantId}', $this->merchantToken, $this->endpoints['ccr']);
+
+        $this->makeRequest($url, 'POST', $data);
+
+        if ($this->wasSuccess()) {
+
+            return $this->parseResponse();
+        } else {
+            $code = $this->lastResponse->getStatus();
+            $body = $this->lastResponse->getBody();
+            $errorStr = $code . ': ' . $body;
+            $this->handleError($errorStr);
+        }
+
+        return false;
     }
-    
+
     /**
      * Makes a request to the Recensus API.
      * 
      * @return boolean
      */
-    protected function makeRequest() {
-        
+    protected function makeRequest($url, $method, $data = null) {
+
+        // If the SDK is used multiple times ensure all params are reset.
+        $this->httpClient->resetParameters(true);
+
+        $this->httpClient->setHeaders('Accept', 'applicaton/json');
+        $this->httpClient->setMethod($method);
+        $this->httpClient->setUri($url);
+
+        if (!is_null($data)) {
+
+            $formattedRequest = array(
+                'data' => $data,
+                'signedRequest' => $this->signRequest($method, $url),
+            );
+
+            $jsonEncodedData = json_encode($formattedRequest);
+
+            if (!$jsonEncodedData) {
+                $this->handleError("Error json encoding before sending request");
+            }
+
+            // Content-Type must be sent or 500 returned
+            $this->httpClient->setHeaders('Content-Type', 'application/json');
+            $this->httpClient->setRawData($jsonEncodedData);
+        }
+        try {
+            $this->lastResponse = $this->httpClient->request();
+        } catch (Exception $e) {
+            $this->handleError($e->getMessage());
+        }
     }
 
     /**
@@ -152,10 +250,32 @@ class RecensusApi {
      * 
      * @return string
      */
-    protected function signRequest() {
+    protected function signRequest($method, $url) {
+
+        $hashableStr = $method . $url . $this->merchantSecret;
+
+        $signedRequest = array(
+            'token' => $this->merchantToken,
+            'signature' => md5($hashableStr)
+        );
         
+        return $signedRequest;
     }
-    
+
+    /**
+     * Determines if the last request was a success (1** - 2** code).
+     * 
+     * @return boolean
+     */
+    protected function wasSuccess() {
+
+        if (!isset($this->lastResponse)) {
+            $this->handleError("Request has not been sent to the API");
+        }
+
+        return $this->lastResponse->isSuccessful();
+    }
+
     /**
      * Parses the JSON encoded request body returned by the Recensus API and 
      * returns a PHP array representing the resourse.
@@ -163,7 +283,33 @@ class RecensusApi {
      * @return array
      */
     protected function parseResponse() {
-        
+
+        $parseResult = json_decode($this->lastResponse->getBody(), true);
+
+        if (!$parseResult) {
+            $this->handleError("Error decoding response from API.");
+        }
+
+        return $parseResult;
+    }
+
+    /**
+     * Takes the error string supplied and if exception throwing is tuned on 
+     * throws an exception. If exception throwing is disabled a PHP Notice is 
+     * generated. This allows the page to coninue rendering despite the Recensus
+     * widget failing to render.
+     * 
+     * @param string $errorString
+     * 
+     * @return void
+     */
+    protected function handleError($errorString) {
+
+        if ($this->throwExceptions) {
+            throw new RecensusWidgetException($errorString);
+        } else {
+            trigger_error('RECENSUS API CALL ERROR: ' . $errorString);
+        }
     }
 
 }

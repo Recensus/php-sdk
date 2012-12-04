@@ -361,5 +361,4 @@ class RecensusWidget {
         }
     }
 
-    // http://app.recensus.com/widget/iframe?url=http://www.williamsbrosbrew.com/&mid=2&brand=Williams Bros. Brewing&mpn=Fraoch 22&gtin=5034743300122&hash=b2f9bec21b8db9a5a2d375db3962c5bc&title=FRAOCH 22#http%3A%2F%2Fapp.recensus.com%2Fdemo%2Fwbb
 }

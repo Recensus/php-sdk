@@ -7,18 +7,18 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/Recensus/zend_http_client.git",
-                "reference": "5b45e57f91a773868af023fc601d5409b860fd84"
+                "reference": "df69866fa8ccf54a740192610fe8e36449bb438d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://github.com/Recensus/zend_http_client/archive/5b45e57f91a773868af023fc601d5409b860fd84.zip",
-                "reference": "5b45e57f91a773868af023fc601d5409b860fd84",
+                "url": "https://github.com/Recensus/zend_http_client/archive/df69866fa8ccf54a740192610fe8e36449bb438d.zip",
+                "reference": "df69866fa8ccf54a740192610fe8e36449bb438d",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.1.0"
             },
-            "time": "1354546572",
+            "time": "1354561296",
             "type": "library",
             "installation-source": "source",
             "autoload": {
