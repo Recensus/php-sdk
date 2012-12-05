@@ -73,6 +73,7 @@ class RecensusApi {
         $this->merchantToken = $merchantToken;
         $this->merchantSecret = $merchantSecret;
         $this->throwExceptions = $throwExceptions;
+        $this->httpClient = new Zend_Http_Client();
     }
 
     /**

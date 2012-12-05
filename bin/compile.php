@@ -44,6 +44,10 @@ $classes = array(
     'Zend_Validate_Hostname_Cn',
     'Zend_Validate_Hostname_Com',
     'Zend_Validate_Hostname_Jp',
+    "RecensusApi",
+    "RecensusApiException",
+    "RecensusWidget",
+    "RecensusWidgetException",
     
 );
 
@@ -54,6 +58,6 @@ $ccl->load($classes, __DIR__ . '/../build', 'recensus', false);
 $debug = getenv('COMPILE_DEBUG');
 
 if (!$debug) {
-    file_put_contents(__DIR__ . '/../build/recensus.php', str_replace('<?php', '', php_strip_whitespace(__DIR__ . '/../build/recensus.php'))
+    file_put_contents(__DIR__ . '/../build/recensus.php', "<?php " . str_replace('<?php', '', php_strip_whitespace(__DIR__ . '/../build/recensus.php'))
     );
 }

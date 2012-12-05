@@ -20,7 +20,7 @@
     "require-dev": {
         "php": ">5.3.3",
         "symfony/finder": "2.1.*",
-        "symfony/class-loader": "2.1.*",
+        "recensus/class-loader": "dev-master",
         "phpunit/phpunit": "3.7.9"
     }
 }
