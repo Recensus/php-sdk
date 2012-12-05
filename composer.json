@@ -1,15 +1,18 @@
 {
     "name": "recensus/php-sdk",
     "description": "The Recensus PHP SDK",
+    "license": "BSD",	
+    "authors": [
+        {
+            "name": "Ben Waine",
+            "email": "ben@recensus.com",
+            "homepage": "http://app.recensus.com",
+            "role": "Maintainer"
+        }
+    ],
     "autoload": {
         "classmap": ["src/"]
     },
-    "repositories": [
-        {
-            "type": "vcs",
-            "url": "https://github.com/Recensus/zend_http_client.git"
-        }
-    ],
     "require": {   
         "php": ">5.1.0",
         "recensus/zend-http-client": "dev-master"
