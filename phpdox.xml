@@ -1,0 +1,12 @@
+<phpdox xmlns="http://phpdox.de/config">
+ <project name="Recensus  Project" source="src" workdir="build/apidocs">
+  <collector publiconly="false">
+   <include mask="*.php" />
+   <exclude mask="*Autoload.php" />
+  </collector>
+
+  <generator output="build/apidocs/output">
+   <build engine="html" enabled="true" output="api"/>
+  </generator>
+ </project>
+</phpdox>

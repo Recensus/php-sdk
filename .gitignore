@@ -2,3 +2,6 @@ nbproject/*
 composer.phar
 vendor/
 build/recensus.php
+build/*
+dev/*
+
