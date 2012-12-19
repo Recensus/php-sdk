@@ -44,6 +44,58 @@ class Recensus_WidgetTest extends PHPUnit_Framework_TestCase {
 
         $this->assertEquals($data, $object->getProductData());
     }
+    
+    /**
+     * @expectedException PHPUnit_Framework_Error
+     */
+    public function testGetSetProductDataShouldErrorIfNoName() {
+
+        $data = $this->getWellFormedData(array('name'));
+
+        $object = new Recensus_Widget('00000', '11111');
+
+        $object->setProductData($data);
+        
+    }
+    
+    /**
+     * @expectedException Recensus_Widget_Exception
+     */
+    public function testGetSetProductDataShouldThrowIfNoName() {
+
+        $data = $this->getWellFormedData(array('name'));
+
+        $object = new Recensus_Widget('00000', '11111', null, true);
+
+        $object->setProductData($data);
+        
+    }
+    
+    /**
+     * @expectedException PHPUnit_Framework_Error
+     */
+    public function testSetProductDataShouldErrorIfNoUrl() {
+
+        $data = $this->getWellFormedData(array('url'));
+
+        $object = new Recensus_Widget('00000', '11111');
+
+        $object->setProductData($data);
+        
+    }
+    
+    /**
+     * @expectedException Recensus_Widget_Exception
+     */
+    public function testSetProductDataShouldThrowIfNoUrl() {
+
+        $data = $this->getWellFormedData(array('url'));
+
+        $object = new Recensus_Widget('00000', '11111', null, true);
+
+        $object->setProductData($data);
+        
+    }
 
     public function testGetSetHtmlURLShouldReturnCorrectValue() {
 
@@ -95,20 +147,6 @@ class Recensus_WidgetTest extends PHPUnit_Framework_TestCase {
     // Recensus Requires Name and URL be present in the data property used
     // to generate the widget.
     
-    public function testGetDataPropertyErrorsIfNameNotPresent() {
-        
-    }
-
-    public function testGetDataPropertyThrowsIfNameNotPresent() {
-        
-    }
-
-    public function testGetDataPropertyErrorsIfUrlNotPresent() {
-        
-    }
-    public function testGetDataPropertyThrowsIfUrlNotPresent() {
-        
-    }    
 
     /**
      * @expectedException PHPUnit_Framework_Error
@@ -125,6 +163,25 @@ class Recensus_WidgetTest extends PHPUnit_Framework_TestCase {
      */
     public function testConstructShouldThrowWhenUrlIsAbsent() {
         $data = $this->getWellFormedData(array('url'));
+
+        $object = new Recensus_Widget('0000000', '000000', $data, true);
+    }
+    
+    /**
+     * @expectedException PHPUnit_Framework_Error
+     */
+    public function testConstructShouldErrorWhenNameIsAbsent() {
+
+        $data = $this->getWellFormedData(array('name'));
+
+        $object = new Recensus_Widget('0000000', '000000', $data);
+    }
+
+    /**
+     * @expectedException Recensus_Widget_Exception
+     */
+    public function testConstructShouldThrowWhenNameIsAbsent() {
+        $data = $this->getWellFormedData(array('name'));
 
         $object = new Recensus_Widget('0000000', '000000', $data, true);
     }
@@ -205,7 +262,7 @@ class Recensus_WidgetTest extends PHPUnit_Framework_TestCase {
 
         $dataProp = $object->getDataProperty();
 
-        $expectedDataProp = "name=Hello&url=http://cool-shoes.com/product/cool-shoe-1&mid=00000&brand=Cool Shoe Maker&mpn=Cool Shoes&gtin=00000000000&type=p&lang=en&title=Super Cool Shoes&info=These shoes are off the hook!&price=2.99&hash=bf1e3ae40da1c72f8da319914595c354";
+        $expectedDataProp = "name=Hello&url=http%3A%2F%2Fcool-shoes.com%2Fproduct%2Fcool-shoe-1&mid=00000&brand=Cool+Shoe+Maker&mpn=Cool+Shoes&gtin=00000000000&type=p&lang=en&title=Super+Cool+Shoes&info=These+shoes+are+off+the+hook%21&price=2.99&hash=bf1e3ae40da1c72f8da319914595c354";
 
         $this->assertEquals($expectedDataProp, $dataProp, "Expected $expectedDataProp but got $dataProp");
     }
