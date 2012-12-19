@@ -5,7 +5,7 @@
  * 
  * @author ben@recensus.com
  */
-class RecensusApi {
+class Recensus_Api {
 
     /**
      * Merchant id issued by Recensus to merchants.
@@ -307,7 +307,7 @@ class RecensusApi {
     protected function handleError($errorString) {
 
         if ($this->throwExceptions) {
-            throw new RecensusWidgetException($errorString);
+            throw new Recensus_Api_Exception($errorString);
         } else {
             trigger_error('RECENSUS API CALL ERROR: ' . $errorString);
         }

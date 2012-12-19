@@ -6,7 +6,7 @@
  * 
  * @author Ben Waine <ben@recensus.com>
  */
-class RecensusWidget {
+class Recensus_Widget {
 
     /**
      * Merchant tokwn issued by Recensus to merchants.
@@ -346,7 +346,7 @@ class RecensusWidget {
     protected function handleError($errorString) {
 
         if ($this->throwExceptions) {
-            throw new RecensusWidgetException($errorString);
+            throw new Recensus_Widget_Exception($errorString);
         } else {
             trigger_error('RECENSUS WIDGET ERROR: ' . $errorString);
         }

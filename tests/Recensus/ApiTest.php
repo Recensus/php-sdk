@@ -1,9 +1,9 @@
 <?php
 
-class RecensusApiTest extends PHPUnit_Framework_TestCase {
+class Recensus_ApiTest extends PHPUnit_Framework_TestCase {
 
     /**
-     * @var RecensusApi
+     * @var Recensus_Api
      */
     protected $object;
     protected $http;
@@ -11,7 +11,7 @@ class RecensusApiTest extends PHPUnit_Framework_TestCase {
 
     public function setUp() {
 
-        $this->object = new RecensusApi('00000', '11111');
+        $this->object = new Recensus_Api('00000', '11111');
 
         $this->http = $this->getMock('Zend_Http_Client', array(), array(), '', false, false);
 
@@ -57,7 +57,7 @@ class RecensusApiTest extends PHPUnit_Framework_TestCase {
 
         $this->assertTrue($this->object->willThrowExceptions());
 
-        $object = new RecensusApi('00000', '11111', true);
+        $object = new Recensus_Api('00000', '11111', true);
 
         $this->assertTrue($object->willThrowExceptions());
     }
@@ -148,7 +148,7 @@ class RecensusApiTest extends PHPUnit_Framework_TestCase {
     }
 
     /**
-     * @expectedException RecensusWidgetException
+     * @expectedException Recensus_Api_Exception
      */
     public function testMakeCustomerContactRequestShouldThrowOnFailure() {
 
@@ -205,7 +205,7 @@ class RecensusApiTest extends PHPUnit_Framework_TestCase {
     }
 
     /**
-     * @expectedException RecensusWidgetException
+     * @expectedException Recensus_Api_Exception
      */
     public function testMakeCustomerContactRequestShouldHandleClientErrorsWithThrow() {
 

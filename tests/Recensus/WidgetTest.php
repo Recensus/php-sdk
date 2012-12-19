@@ -1,6 +1,6 @@
 <?php
 
-class RecensusWidgetTest extends PHPUnit_Framework_TestCase {
+class Recensus_WidgetTest extends PHPUnit_Framework_TestCase {
 
     // Boiler plate tests to ensure default properties and getters and setters
 
@@ -8,7 +8,7 @@ class RecensusWidgetTest extends PHPUnit_Framework_TestCase {
 
         $data = $this->getWellFormedData();
 
-        $object = new RecensusWidget('00000', '11111', $data);
+        $object = new Recensus_Widget('00000', '11111', $data);
 
         $this->assertEquals('00000', $object->getMerchantToken());
 
@@ -21,7 +21,7 @@ class RecensusWidgetTest extends PHPUnit_Framework_TestCase {
 
         $data = $this->getWellFormedData();
 
-        $object = new RecensusWidget('00000', '11111', $data);
+        $object = new Recensus_Widget('00000', '11111', $data);
 
         $this->assertEquals('11111', $object->getSharedSecret());
 
@@ -34,7 +34,7 @@ class RecensusWidgetTest extends PHPUnit_Framework_TestCase {
 
         $data = $this->getWellFormedData();
 
-        $object = new RecensusWidget('00000', '11111', $data);
+        $object = new Recensus_Widget('00000', '11111', $data);
 
         $this->assertEquals($data, $object->getProductData());
 
@@ -49,7 +49,7 @@ class RecensusWidgetTest extends PHPUnit_Framework_TestCase {
 
         $data = $this->getWellFormedData();
 
-        $object = new RecensusWidget('00000', '11111', $data);
+        $object = new Recensus_Widget('00000', '11111', $data);
 
         $this->assertEquals("http://app.recensus.com/widget/api/get", $object->getHtmlEndpointUrl());
 
@@ -62,7 +62,7 @@ class RecensusWidgetTest extends PHPUnit_Framework_TestCase {
 
         $data = $this->getWellFormedData();
 
-        $object = new RecensusWidget('00000', '11111', $data);
+        $object = new Recensus_Widget('00000', '11111', $data);
 
         $this->assertFalse($object->willThrowExceptions());
 
@@ -70,7 +70,7 @@ class RecensusWidgetTest extends PHPUnit_Framework_TestCase {
 
         $this->assertTrue($object->willThrowExceptions());
 
-        $object = new RecensusWidget('00000', '11111', $data, true);
+        $object = new Recensus_Widget('00000', '11111', $data, true);
 
         $this->assertTrue($object->willThrowExceptions());
     }
@@ -79,7 +79,7 @@ class RecensusWidgetTest extends PHPUnit_Framework_TestCase {
 
         $data = $this->getWellFormedData();
 
-        $object = new RecensusWidget('00000', '11111', $data);
+        $object = new Recensus_Widget('00000', '11111', $data);
 
         $client = $object->getHttpClient();
 
@@ -117,16 +117,16 @@ class RecensusWidgetTest extends PHPUnit_Framework_TestCase {
 
         $data = $this->getWellFormedData(array('url'));
 
-        $object = new RecensusWidget('0000000', '000000', $data);
+        $object = new Recensus_Widget('0000000', '000000', $data);
     }
 
     /**
-     * @expectedException RecensusWidgetException
+     * @expectedException Recensus_Widget_Exception
      */
     public function testConstructShouldThrowWhenUrlIsAbsent() {
         $data = $this->getWellFormedData(array('url'));
 
-        $object = new RecensusWidget('0000000', '000000', $data, true);
+        $object = new Recensus_Widget('0000000', '000000', $data, true);
     }
 
     // Remaining productData fields are optional.
@@ -135,9 +135,9 @@ class RecensusWidgetTest extends PHPUnit_Framework_TestCase {
 
         $data = $this->getWellFormedData(array('type', 'lang', 'info', 'price'));
 
-        $object = new RecensusWidget('0000000', '000000', $data);
+        $object = new Recensus_Widget('0000000', '000000', $data);
 
-        $this->assertInstanceOf('RecensusWidget', $object);
+        $this->assertInstanceOf('Recensus_Widget', $object);
     }
 
 
@@ -145,9 +145,9 @@ class RecensusWidgetTest extends PHPUnit_Framework_TestCase {
 
         $data = $this->getWellFormedData(array('type', 'lang', 'info', 'price'));
 
-        $object = new RecensusWidget('0000000', '000000', $data, true);
+        $object = new Recensus_Widget('0000000', '000000', $data, true);
 
-        $this->assertInstanceOf('RecensusWidget', $object);
+        $this->assertInstanceOf('Recensus_Widget', $object);
     }
 
     // If no product data is set then an error should be triggered
@@ -157,17 +157,17 @@ class RecensusWidgetTest extends PHPUnit_Framework_TestCase {
      */
     public function testGetDataPropertyShouldErrorIfNoProductDataPresent() {
 
-        $object = new RecensusWidget('0000000', '000000', null);
+        $object = new Recensus_Widget('0000000', '000000', null);
 
         $object->getDataProperty();
     }
 
     /**
-     * @expectedException RecensusWidgetException
+     * @expectedException Recensus_Widget_Exception
      */
     public function testGetDataPropertyShouldThrowIfNoProductDataPresent() {
 
-        $object = new RecensusWidget('0000000', '000000', null, true);
+        $object = new Recensus_Widget('0000000', '000000', null, true);
 
         $object->getDataProperty();
     }
@@ -177,17 +177,17 @@ class RecensusWidgetTest extends PHPUnit_Framework_TestCase {
      */
     public function testGetHTMLFragmentShouldErrorIfNoProductDataPresent() {
 
-        $object = new RecensusWidget('0000000', '000000', null);
+        $object = new Recensus_Widget('0000000', '000000', null);
 
         $object->getHTML();
     }
 
     /**
-     * @expectedException RecensusWidgetException
+     * @expectedException Recensus_Widget_Exception
      */
     public function testGetHTMLFragmentShouldThrowIfNoProductDataPresent() {
 
-        $object = new RecensusWidget('0000000', '000000', null, true);
+        $object = new Recensus_Widget('0000000', '000000', null, true);
 
         $object->getHTML();
     }
@@ -201,7 +201,7 @@ class RecensusWidgetTest extends PHPUnit_Framework_TestCase {
 
         $data = $this->getWellFormedData();
 
-        $object = new RecensusWidget('00000', '11111', $data, true);
+        $object = new Recensus_Widget('00000', '11111', $data, true);
 
         $dataProp = $object->getDataProperty();
 
@@ -245,7 +245,7 @@ class RecensusWidgetTest extends PHPUnit_Framework_TestCase {
 
         $data = $this->getWellFormedData();
 
-        $object = new RecensusWidget('00000', '11111', $data);
+        $object = new Recensus_Widget('00000', '11111', $data);
         $object->setHttpClient($client);
 
         $html = $object->getHTML();
@@ -286,7 +286,7 @@ class RecensusWidgetTest extends PHPUnit_Framework_TestCase {
 
         $data = $this->getWellFormedData();
 
-        $object = new RecensusWidget('00000', '11111', $data);
+        $object = new Recensus_Widget('00000', '11111', $data);
         $object->setHttpClient($client);
 
         $html = $object->getHTML();
@@ -317,14 +317,14 @@ class RecensusWidgetTest extends PHPUnit_Framework_TestCase {
 
         $data = $this->getWellFormedData();
 
-        $object = new RecensusWidget('00000', '11111', $data);
+        $object = new Recensus_Widget('00000', '11111', $data);
         $object->setHttpClient($client);
 
         $html = $object->getHTML();
     }
 
     /**
-     * @expectedException RecensusWidgetException
+     * @expectedException Recensus_Widget_Exception
      */
     public function testGetHTMLFragmentThrowsOnBadResponse() {
         $expectedDataProp = "http://app.recensus.com/widget/api/get?name=Hello&url=http%3A%2F%2Fcool-shoes.com%2Fproduct%2Fcool-shoe-1&mid=00000&brand=Cool+Shoe+Maker&mpn=Cool+Shoes&gtin=00000000000&type=p&lang=en&title=Super+Cool+Shoes&info=These+shoes+are+off+the+hook%21&price=2.99&hash=bf1e3ae40da1c72f8da319914595c354";
@@ -353,14 +353,14 @@ class RecensusWidgetTest extends PHPUnit_Framework_TestCase {
 
         $data = $this->getWellFormedData();
 
-        $object = new RecensusWidget('00000', '11111', $data, true);
+        $object = new Recensus_Widget('00000', '11111', $data, true);
         $object->setHttpClient($client);
 
         $html = $object->getHTML();
     }
 
     /**
-     * @expectedException RecensusWidgetException
+     * @expectedException Recensus_Widget_Exception
      */
     public function testGetHTMLFragmentThrowsOnRequestError() {
         $expectedDataProp = "http://app.recensus.com/widget/api/get?name=Hello&url=http%3A%2F%2Fcool-shoes.com%2Fproduct%2Fcool-shoe-1&mid=00000&brand=Cool+Shoe+Maker&mpn=Cool+Shoes&gtin=00000000000&type=p&lang=en&title=Super+Cool+Shoes&info=These+shoes+are+off+the+hook%21&price=2.99&hash=bf1e3ae40da1c72f8da319914595c354";
@@ -383,7 +383,7 @@ class RecensusWidgetTest extends PHPUnit_Framework_TestCase {
 
         $data = $this->getWellFormedData();
 
-        $object = new RecensusWidget('00000', '11111', $data, true);
+        $object = new Recensus_Widget('00000', '11111', $data, true);
         $object->setHttpClient($client);
 
         $html = $object->getHTML();

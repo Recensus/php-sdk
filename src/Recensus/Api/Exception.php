@@ -4,7 +4,7 @@
  *
  * @author Ben Waine <ben@recensus.com>
  */
-class RecensusApiException extends Exception {
+class Recensus_Api_Exception extends Exception {
 
     
 }
