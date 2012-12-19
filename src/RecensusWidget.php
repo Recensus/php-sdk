@@ -13,7 +13,7 @@ class RecensusWidget {
      * 
      * @var string
      */
-    protected $merchantToken;
+    protected $merchantId;
 
     /**
      * Shared secret used to create identifying hashes.
@@ -54,24 +54,24 @@ class RecensusWidget {
     /**
      * Initiaise an instance of the RecensusWidget class.
      * 
-     * @param string $merchantToken  Identifying token given to merchants by Recensus
+     * @param string $merchantId  Identifying token given to merchants by Recensus
      * @param string $merchantSecret Secret shared between merchant and Recensus for hashing requests.
      * @param array  $productData    Array of product data used to render the widget
      * 
      * @return RecensusWidget
      */
-    public function __construct($merchantToken, $merchantSecret, $productData = null, $throwExceptions = false) {
-        
+    public function __construct($merchantId, $merchantSecret, $productData = null, $throwExceptions = false) {
+
         $this->throwExceptions = $throwExceptions;
 
-        $this->merchantToken = $merchantToken;
+        $this->merchantId = $merchantId;
         $this->merchantSecret = $merchantSecret;
 
-        if(!is_null($productData)) {
-            $this->validateProductData($productData);    
+        if (!is_null($productData)) {
+            $this->validateProductData($productData);
             $this->productData = $productData;
         }
-        
+
         $this->httpClient = new Zend_Http_Client();
     }
 
@@ -81,18 +81,18 @@ class RecensusWidget {
      * @return string
      */
     public function getMerchantToken() {
-        return $this->merchantToken;
+        return $this->merchantId;
     }
 
     /**
      * Sets the merchant token issued by recensus to the merchant.
      * 
-     * @param string $merchantToken
+     * @param string $merchantId
      * 
      * @return void
      */
-    public function setMerchantToken($merchantToken) {
-        $this->merchantToken = $merchantToken;
+    public function setMerchantToken($merchantId) {
+        $this->merchantId = $merchantId;
     }
 
     /**
@@ -135,13 +135,13 @@ class RecensusWidget {
         $this->validateProductData($productData);
         $this->productData = $productData;
     }
-    
+
     /**
      * Returns the URL in used to call the Recensus HTML Fragment endpoint.
      * 
      * @return string
      */
-    public function getFragEndpointURL() {
+    public function getHtmlEndpointURL() {
         return $this->fragURL;
     }
 
@@ -150,7 +150,7 @@ class RecensusWidget {
      * 
      * @param string $fragURL
      */
-    public function setFragEndpointURL($fragURL) {
+    public function setHtmlEndpointURL($fragURL) {
         $this->fragURL = $fragURL;
     }
 
@@ -162,7 +162,7 @@ class RecensusWidget {
     public function getHttpClient() {
         return $this->httpClient;
     }
-    
+
     /**
      * Override the instance of Zend_Http_Client used to make calls to the 
      * Recensus service. Used for testing.
@@ -183,7 +183,7 @@ class RecensusWidget {
     public function willThrowExceptions() {
         return $this->throwExceptions;
     }
-    
+
     /**
      * Sets if to throw exceptions. The default is not to throw exceptions
      * and instead to create PHP_Notices. This to allow the implementing site
@@ -194,7 +194,7 @@ class RecensusWidget {
      * @return void
      */
     public function setThrowExceptions($throw) {
-         $this->throwExceptions = $throw;
+        $this->throwExceptions = $throw;
     }
 
     /**
@@ -203,13 +203,13 @@ class RecensusWidget {
      * 
      * @return string 
      */
-    public function getHTMLFragment() {
-        
-        if(!isset($this->productData)) {
+    public function getHTML() {
+
+        if (!isset($this->productData)) {
             $this->handleError("No product data set");
         }
-        
-        $callingUrl = $this->fragURL . "?" . $this->getFrag();
+
+        $callingUrl = $this->fragURL . "?" . $this->getUrlFragment();
 
         try {
 
@@ -217,19 +217,15 @@ class RecensusWidget {
                     ->setUri($callingUrl)
                     ->setMethod()
                     ->request();
-            
-            if($response->isSuccessful()) {
-                return $response->getBody();    
+
+            if ($response->isSuccessful()) {
+                return $response->getBody();
             } else {
                 $this->handleError('Recieved ' . $response->responseCodeAsText() . 'from ' . $callingUrl);
             }
-          
-            
         } catch (Exception $e) {
             $this->handleError($e->getMessage());
         }
-        
-        
     }
 
     /**
@@ -239,12 +235,12 @@ class RecensusWidget {
      * @return string 
      */
     public function getDataProperty() {
-        
-        if(!isset($this->productData)) {
+
+        if (!isset($this->productData)) {
             $this->handleError("No product data set");
         }
 
-        $frag = $this->getFrag(false);
+        $frag = $this->getUrlFragment(false);
 
         return $frag;
     }
@@ -258,20 +254,12 @@ class RecensusWidget {
      */
     protected function validateProductData($data) {
 
-        // Check required ID params are preset (GTIN or mpn + brand)
-        $gtin = (isset($data['gtin']) && !empty($data['gtin'])) ? $data['gtin'] : null;
-        $mpn = (isset($data['mpn']) && !empty($data['mpn'])) ? $data['mpn'] : null;
-        $brand = (isset($data['brand']) && !empty($data['brand'])) ? $data['brand'] : null;
-
-        if (is_null($gtin) && (is_null($brand) || is_null($mpn))) {
-            $this->handleError('Either gtin or brand + mpn must be set in productData array');
+        if (!isset($data['name']) || empty($data['name'])) {
+            $this->handleError('Name must be set in productData');
         }
 
-        // Check URL is present and valid
-        $url = (isset($data['url']) && !empty($data['url'])) ? $data['url'] : null;
-
-        if (is_null($url)) {
-            $this->handleError('URL of the product on the merchant site must be passed in productData array');
+        if (!isset($data['url']) || empty($data['url'])) {
+            $this->handleError('URL must be set in productData');
         }
 
         return true;
@@ -283,30 +271,33 @@ class RecensusWidget {
      * 
      * @return string
      */
-    protected function getFrag($encode = true) {
-        
+    protected function getUrlFragment($encode = true) {
+
         $hashStr = "";
         $parts = array();
 
+
+        if (isset($this->productData['name'])) {
+            $parts['name'] = $this->productData['name'];
+            $hashStr .= $this->productData['name'];
+        }
+        
         if (isset($this->productData['url']))
             $parts['url'] = $this->productData['url'];
 
-        if (isset($this->merchantToken))
-            $parts['mid'] = $this->merchantToken;
+        if (isset($this->merchantId))
+            $parts['mid'] = $this->merchantId;
 
         if (isset($this->productData['brand'])) {
             $parts['brand'] = $this->productData['brand'];
-            $hashStr .= $this->productData['brand'];
         }
 
         if (isset($this->productData['mpn'])) {
             $parts['mpn'] = $this->productData['mpn'];
-            $hashStr .= $this->productData['mpn'];
         }
 
         if (isset($this->productData['gtin'])) {
             $parts['gtin'] = $this->productData['gtin'];
-            $hashStr .= $this->productData['gtin'];
         }
 
         if (isset($this->productData['type']))
@@ -320,7 +311,7 @@ class RecensusWidget {
 
         if (isset($this->productData['info']))
             $parts['info'] = $this->productData['info'];
-        
+
         if (isset($this->productData['price']))
             $parts['price'] = $this->productData['price'];
 
@@ -329,11 +320,11 @@ class RecensusWidget {
         $frag = "";
 
         foreach ($parts as $key => $value) {
-            
-            if($encode) {
+
+            if ($encode) {
                 $value = urlencode($value);
             }
-            
+
             $frag .= $key . '=' . $value . '&';
         }
 
