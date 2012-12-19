@@ -22,13 +22,13 @@ class RecensusApiTest extends PHPUnit_Framework_TestCase {
 
     // Boilerplate tests for getters and setters and default values are correct. 
 
-    public function testGetSetMerchantTokenShouldReturnCorrectValue() {
+    public function testGetSetMerchantIdShouldReturnCorrectValue() {
 
-        $this->assertEquals('00000', $this->object->getMerchantToken());
+        $this->assertEquals('00000', $this->object->getMerchantId());
 
-        $this->object->setMerchantToken('33333');
+        $this->object->setMerchantId('33333');
 
-        $this->assertEquals('33333', $this->object->getMerchantToken());
+        $this->assertEquals('33333', $this->object->getMerchantId());
     }
 
     public function testGetSetMerchantSecretShouldReturnCorrectValue() {

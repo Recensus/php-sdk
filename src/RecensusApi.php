@@ -8,11 +8,11 @@
 class RecensusApi {
 
     /**
-     * Merchant tokwn issued by Recensus to merchants.
+     * Merchant id issued by Recensus to merchants.
      * 
      * @var string
      */
-    protected $merchantToken;
+    protected $merchantId;
 
     /**
      * Shared secret used to create identifying hashes.
@@ -63,14 +63,14 @@ class RecensusApi {
     /**
      * Initialises an instance of the RecensusApi class.
      * 
-     * @param string  $merchantToken
+     * @param string  $merchantId
      * @param string  $merchantSecret
      * @param boolean $throwExceptions
      * 
      * @return void
      */
-    public function __construct($merchantToken, $merchantSecret, $throwExceptions = false) {
-        $this->merchantToken = $merchantToken;
+    public function __construct($merchantId, $merchantSecret, $throwExceptions = false) {
+        $this->merchantId = $merchantId;
         $this->merchantSecret = $merchantSecret;
         $this->throwExceptions = $throwExceptions;
         $this->httpClient = new Zend_Http_Client();
@@ -81,19 +81,19 @@ class RecensusApi {
      * 
      * @return string
      */
-    public function getMerchantToken() {
-        return $this->merchantToken;
+    public function getMerchantId() {
+        return $this->merchantId;
     }
 
     /**
      * Sets the merchant token issued by recensus to the merchant.
      * 
-     * @param string $merchantToken
+     * @param string $merchantId
      * 
      * @return void
      */
-    public function setMerchantToken($merchantToken) {
-        $this->merchantToken = $merchantToken;
+    public function setMerchantId($merchantId) {
+        $this->merchantId = $merchantId;
     }
 
     /**
@@ -190,7 +190,7 @@ class RecensusApi {
      */
     public function makeCustomerContactRequest($data) {
 
-        $url = $this->baseUrl . str_replace('{merchantId}', $this->merchantToken, $this->endpoints['ccr']);
+        $url = $this->baseUrl . str_replace('{merchantId}', $this->merchantId, $this->endpoints['ccr']);
 
         $this->makeRequest($url, 'POST', $data);
 
@@ -256,7 +256,7 @@ class RecensusApi {
         $hashableStr = $method . $url . $this->merchantSecret;
 
         $signedRequest = array(
-            'token' => $this->merchantToken,
+            'token' => $this->merchantId,
             'signature' => md5($hashableStr)
         );
         
