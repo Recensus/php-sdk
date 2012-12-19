@@ -240,7 +240,7 @@ class Recensus_Widget {
             $this->handleError("No product data set");
         }
 
-        $frag = $this->getUrlFragment(false);
+        $frag = $this->getUrlFragment(true);
 
         return $frag;
     }
