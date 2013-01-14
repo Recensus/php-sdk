@@ -49,7 +49,7 @@ class Recensus_Widget {
      * 
      * @var string
      */
-    protected $fragURL = "http://app.recensus.com/widget/api/get";
+    protected $fragURL = "https://app.recensus.com/widget/api/get";
 
     /**
      * Initiaise an instance of the RecensusWidget class.

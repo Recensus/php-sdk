@@ -41,7 +41,7 @@ class Recensus_Api {
      * 
      * @var string
      */
-    protected $baseUrl = "http://api.recensus.com/";
+    protected $baseUrl = "https://api.recensus.com/";
 
     /**
      * The end points to use when making requests to the services offered by
