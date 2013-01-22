@@ -63,9 +63,9 @@ class Recensus_Api {
     /**
      * Initialises an instance of the RecensusApi class.
      * 
-     * @param string  $merchantId
-     * @param string  $merchantSecret
-     * @param boolean $throwExceptions
+     * @param string  $merchantId      Identifying token given to merchants by Recensus
+     * @param string  $merchantSecret  Secret shared between merchant and Recensus for hashing requests.
+     * @param boolean $throwExceptions If true will throw exceptions rather than emit notices.
      * 
      * @return void
      */
@@ -74,6 +74,10 @@ class Recensus_Api {
         $this->merchantSecret = $merchantSecret;
         $this->throwExceptions = $throwExceptions;
         $this->httpClient = new Zend_Http_Client();
+        
+        $this->httpClient->setConfig(array(
+            "timeout" => 3
+        ));
     }
 
     /**

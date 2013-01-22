@@ -54,9 +54,10 @@ class Recensus_Widget {
     /**
      * Initiaise an instance of the RecensusWidget class.
      * 
-     * @param string $merchantId  Identifying token given to merchants by Recensus
-     * @param string $merchantSecret Secret shared between merchant and Recensus for hashing requests.
-     * @param array  $productData    Array of product data used to render the widget
+     * @param string  $merchantId      Identifying token given to merchants by Recensus
+     * @param string  $merchantSecret  Secret shared between merchant and Recensus for hashing requests.
+     * @param array   $productData     Array of product data used to render the widget
+     * @param boolean $throwExceptions If true will throw exceptions rather than emit notices.
      * 
      * @return RecensusWidget
      */
@@ -73,6 +74,10 @@ class Recensus_Widget {
         }
 
         $this->httpClient = new Zend_Http_Client();
+        
+        $this->httpClient->setConfig(array(
+            "timeout" => 3
+        ));
     }
 
     /**
@@ -229,8 +234,8 @@ class Recensus_Widget {
     }
 
     /**
-     * Uses the current product data and generates the URL of the IFrame to
-     * embedd the recensus widget on the merchants product page.
+     * Uses the current product data and generates the data property used in the
+     * <div class="recensus"> to display the relevant widget.
      * 
      * @return string 
      */
