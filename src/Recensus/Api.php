@@ -276,6 +276,7 @@ class Recensus_Api {
 
         if (!isset($this->lastResponse)) {
             $this->handleError("Request has not been sent to the API");
+            return false;
         }
 
         return $this->lastResponse->isSuccessful();

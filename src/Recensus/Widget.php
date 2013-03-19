@@ -9,7 +9,14 @@
 class Recensus_Widget {
 
     /**
-     * Merchant tokwn issued by Recensus to merchants.
+     * User ID issued by Recensus to merchants.
+     * 
+     * @var string
+     */
+    protected $userId;
+
+    /**
+     * Merchant ID issued by Recensus to merchants.
      * 
      * @var string
      */
@@ -61,10 +68,11 @@ class Recensus_Widget {
      * 
      * @return RecensusWidget
      */
-    public function __construct($merchantId, $merchantSecret, $productData = null, $throwExceptions = false) {
+    public function __construct($userId, $merchantId, $merchantSecret, $productData = null, $throwExceptions = false) {
 
         $this->throwExceptions = $throwExceptions;
-
+        
+        $this->userId = $userId;
         $this->merchantId = $merchantId;
         $this->merchantSecret = $merchantSecret;
 
@@ -258,6 +266,10 @@ class Recensus_Widget {
      * @return boolean
      */
     protected function validateProductData($data) {
+       
+        if (!isset($data['sku']) || empty($data['sku'])) {
+            $this->handleError('SKU must be set in productData');
+        }
 
         if (!isset($data['name']) || empty($data['name'])) {
             $this->handleError('Name must be set in productData');
@@ -282,6 +294,11 @@ class Recensus_Widget {
         $parts = array();
 
 
+        if (isset($this->productData['sku'])) {
+            $parts['sku'] = $this->productData['sku'];
+            $hashStr .= $this->productData['sku'];
+        }
+        
         if (isset($this->productData['name'])) {
             $parts['name'] = $this->productData['name'];
             $hashStr .= $this->productData['name'];
@@ -291,7 +308,10 @@ class Recensus_Widget {
             $parts['url'] = $this->productData['url'];
 
         if (isset($this->merchantId))
-            $parts['mid'] = $this->merchantId;
+            $parts['merchantId'] = $this->merchantId;
+
+        if (isset($this->userId))
+            $parts['userId'] = $this->userId;
 
         if (isset($this->productData['brand'])) {
             $parts['brand'] = $this->productData['brand'];
